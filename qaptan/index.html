@@ -186,7 +186,7 @@ main{padding:0 var(--gutter) calc(130px + var(--safe-b))}
 
 /* ---------- لوحة الفلاتر (ورقة سفلية على الشاشات العمودية) ---------- */
 .filters{
-  position:fixed;left:0;right:0;bottom:0;z-index:70;max-height:88vh;max-height:88dvh;overflow:auto;overscroll-behavior:contain;
+  position:fixed;left:0;right:0;bottom:0;z-index:70;max-width:760px;margin-inline:auto;max-height:88vh;max-height:88dvh;overflow:auto;overscroll-behavior:contain;
   background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:10px 26px calc(24px + var(--safe-b));
   transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);box-shadow:0 -20px 50px -20px rgba(0,0,0,.35);
 }
@@ -523,17 +523,9 @@ textarea.input{min-height:110px;resize:vertical;line-height:1.6}
    ===================================================================== */
 /* شاشة أفقية عريضة: الفلاتر تصير عمود جانبي ثابت */
 @media (min-width:1024px) and (orientation:landscape){
-  .home-layout{grid-template-columns:320px minmax(0,1fr)}
-  .filters{
-    position:sticky;top:calc(var(--topbar-h) + 18px);left:auto;right:auto;bottom:auto;z-index:1;transform:none;transition:none;
-    max-height:calc(100vh - var(--topbar-h) - 140px);border-radius:var(--r-xl);border:1px solid var(--line);box-shadow:none;padding:20px 24px;
-  }
-  .filters::before,.fp-close,.fp-foot,.filter-btn,.fp-backdrop{display:none}
-  .filters.flash{animation:flash 1s ease}
   .detail-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start}
   .detail-media{position:sticky;top:calc(var(--topbar-h) + 20px);max-height:calc(100vh - var(--topbar-h) - 190px);max-width:calc((100vh - var(--topbar-h) - 190px) * .75)}
 }
-@keyframes flash{30%{box-shadow:0 0 0 4px var(--gold)}}
 @media (min-width:760px) and (orientation:portrait){
   .detail-media{max-height:52vh;max-width:calc(52vh * .75)}
 }
@@ -1502,15 +1494,9 @@ function clearFilters() {
   syncFilterUI(); updateResults();
 }
 
-const wideLayout = () => window.matchMedia('(min-width:1024px) and (orientation:landscape)').matches;
 function openFilters() {
   if (state.view !== 'home') navigateHome();
   const panel = $('#filtersPanel');
-  if (wideLayout()) {
-    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    panel.classList.remove('flash'); void panel.offsetWidth; panel.classList.add('flash');
-    return;
-  }
   state.sheetOpen = true;
   panel.classList.add('open');
   $('#fpBackdrop').classList.add('show');
@@ -2503,7 +2489,7 @@ function bindEvents() {
   window.addEventListener('scroll', () => { lastActivity = Date.now(); }, { passive: true });
   setInterval(idleTick, 1000);
   // تحديث التخطيط عند تدوير الشاشة
-  window.addEventListener('resize', debounce(() => { if (wideLayout() && state.sheetOpen) closeFilters(); paintRange(); }, 150));
+  window.addEventListener('resize', debounce(() => { paintRange(); }, 150));
   document.addEventListener('contextmenu', (e) => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
 }
 
